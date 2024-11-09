@@ -1,0 +1,14 @@
+package-lock.json
+apk/*
+dist/*
+node_modules/
+tsk_r_programdata/
+*.keystore
+frida/*
+!frida/libgadget.config.so
+res/notosanscjktc
+.idea/*
+apktool.*
+.env
+.secret
+/build_local.py
