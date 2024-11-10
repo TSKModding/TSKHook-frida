@@ -1,0 +1,112 @@
+name: APK Version Check and Build
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '55 7 * * *' # when usually apk is updated
+
+jobs:
+  check_apk_version:
+    runs-on: ubuntu-latest
+    outputs:
+      match: ${{ steps.compare_versions.outputs.match }}
+      release_version: ${{ steps.get_release_version.outputs.release_version }}
+      apk_version: ${{ steps.get_apk_version.outputs.apk_version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Github CLI
+        if: ${{ env.act }}
+        run: |
+          wget -O gh.deb https://github.com/cli/cli/releases/download/v2.61.0/gh_2.61.0_linux_amd64.deb
+          dpkg -i gh.deb
+
+      - name: Get the last release version
+        id: get_release_version
+        run: |
+          last_release=$(gh release list --json tagName,isLatest --jq ".[] | select(.isLatest)|.tagName")
+          echo "release_version=$last_release" >> $GITHUB_OUTPUT
+
+      - name: Get APK version
+        id: get_apk_version
+        run: |
+          apk_version=$(curl -s https://api.store.games.dmm.com/freeapp/705566 | jq -r '.free_appinfo.app_version_name')
+          echo "apk_version=$apk_version" >> $GITHUB_OUTPUT
+
+      - name: Compare versions
+        id: compare_versions
+        run: |
+          release_version=${{ steps.get_release_version.outputs.release_version }}
+          apk_version=${{ steps.get_apk_version.outputs.apk_version }}
+          release_version_game=$(echo $release_version |  sed -E 's/.*-v([0-9]+\.[0-9]+\.[0-9]+)$/\1/')
+          if [ "$release_version_game" != "$apk_version" ]; then
+            echo "match=false" >> $GITHUB_OUTPUT
+          else
+            echo "match=true" >> $GITHUB_OUTPUT
+          fi
+
+  build_and_release:
+    permissions:
+      contents: write
+    needs: check_apk_version
+    if: needs.check_apk_version.outputs.match == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        if: ${{ env.act }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Node
+        if: ${{ env.act }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+
+      - name: Install Java
+        if: ${{ env.act }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Android SDK
+        if: ${{ env.act }}
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android build-tools
+        if: ${{ env.act }}
+        run: sdkmanager "build-tools;35.0.0"
+
+      - name: Install Dependenices
+        run: |
+          sudo apt update
+          sudo apt install gzip apktool -y
+          python -m pip install -r requirements.txt --user
+          npm i
+
+      - name: Get Frida
+        run: |
+          curl -L -o gadget-android-arm64.so.gz "https://github.com/hzzheyang/strongR-frida-android/releases/download/16.5.6/hluda-gadget-16.5.6-android-arm64.so.gz"
+          gzip -d gadget-android-arm64.so.gz
+          cp gadget-android-arm64.so ./frida/gadget-android-arm64.so
+
+      - name: Run build script
+        env:
+          KEYSTORE: ${{secrets.KEYSTORE}}
+        run: |
+          python build.py
+
+      - name: Upload APK to release
+        env:
+          APK_VERSION: ${{ needs.check_apk_version.outputs.apk_version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          program_version="v1.0.0"
+          new_version="${program_version}-game-v${APK_VERSION}"
+          gh release create $new_version dist/*.apk

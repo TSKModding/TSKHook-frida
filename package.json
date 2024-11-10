@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "buildw": "frida-compile -S -o dist/_.js -w src/index.js",
+    "build": "frida-compile -S -o dist/_.js src/index.js",
+    "attach": "run() { frida -U \"$1\" -l dist/_.js --runtime=v8; }; run",
+    "spawn": "run() { frida -U -f \"$1\" -l dist/_.js --no-pause --runtime=v8; }; run"
+  },
+  "devDependencies": {
+    "@types/frida-gum": "^18.7.0",
+    "frida-compile": "^16.4.1",
+    "frida-fs": "^5.2.5",
+    "frida-il2cpp-bridge": "^0.9.0"
+  }
+}
