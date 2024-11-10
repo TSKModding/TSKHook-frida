@@ -24,6 +24,8 @@ jobs:
 
       - name: Get the last release version
         id: get_release_version
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           last_release=$(gh release list --json tagName,isLatest --jq ".[] | select(.isLatest)|.tagName")
           echo "release_version=$last_release" >> $GITHUB_OUTPUT
