@@ -1,6 +1,45 @@
 import 'frida-il2cpp-bridge'
 import fs from "fs";
 
+function logToAndroid(text) {
+    Java.perform(() => {
+        let Log = Java.use("android.util.Log");
+        let TAG_L = "[tskhook-frida]";
+        Log.v(TAG_L, text);
+    });
+}
+
+(function hijackConsole() {
+    let originalLog = console.log;
+    let originalError = console.error;
+
+    console.log = function (...args) {
+        let message = args.map(arg => {
+            if (typeof arg === "object") {
+                return JSON.stringify(arg, null, 2);
+            }
+            return String(arg);
+        }).join(" ");
+
+        logToAndroid(message);
+        originalLog.apply(console, args);
+    };
+
+    console.error = function (...args) {
+        let message = args.map(arg => {
+            if (typeof arg === "object") {
+                return JSON.stringify(arg, null, 2);
+            }
+            return String(arg);
+        }).join(" ");
+
+        logToAndroid(`[ERROR] ${message}`);
+        originalError.apply(console, args);
+    };
+})();
+
+console.log('tsk injector started.');
+
 function isFileExists(path) {
     try {
         return fs.statSync(path).isFile
@@ -34,16 +73,13 @@ Il2Cpp.perform(() => {
             font: null,
             tmpFont: null,
             advId: null,
-            fontPath: getFontPath(),
+            fontPath: null,
             api: 'https://translation.lolida.best/download/tsk'
         }
 
-        sendHttpRequest(`${T.api}/tsk_name/zh_Hant/?format=json`, (data) => {
-            T.names = JSON.parse(data)
-            sendHttpRequest(`${T.api}/tsk_subname/zh_Hant/?format=json`, (data) => {
-                T.names = Object.assign(T.names, JSON.parse(data))
-            })
-        })
+        setTimeout(function () {
+            T.fontPath = getFontPath()
+        }, 5000)
 
         const AdvPage = AssemblyCSharp.class('Utage.AdvPage')
         const AdvBacklog = AssemblyCSharp.class('Utage.AdvBacklog')
@@ -79,9 +115,20 @@ Il2Cpp.perform(() => {
                 loadFont()
             }
             T.advId = label.toLowerCase()
-            if (!(T.advId in T.chapters)) {
+            if (!scenarioLabel.isNull() && !(T.advId in T.chapters)) {
+                console.log(T.advId);
                 sendHttpRequest(`${T.api}/${T.advId}/zh_Hant/?format=json`, (data) => {
                     T.chapters[T.advId] = JSON.parse(data)
+                    console.log('chapter translation loaded. Total:', Object.keys(T.chapters[T.advId]).length);
+                })
+            }
+            if (scenarioLabel.isNull() && Object.keys(T.names).length === 0) {
+                sendHttpRequest(`${T.api}/tsk_name/zh_Hant/?format=json`, (data) => {
+                    T.names = JSON.parse(data)
+                    sendHttpRequest(`${T.api}/tsk_subname/zh_Hant/?format=json`, (data) => {
+                        T.names = Object.assign(T.names, JSON.parse(data))
+                        console.log('name translation loaded. Total:', Object.keys(T.names).length);
+                    })
                 })
             }
             this.method('DownloadChaperKeyFileUsed').invoke(...arguments)
@@ -136,6 +183,7 @@ Il2Cpp.perform(() => {
                     await new Promise(resolve => setTimeout(resolve, 100));
                 }
                 T.font = loadFontRequest.method('get_asset').invoke()
+                console.log("font load succeed.");
                 assetBundle.method('Unload').invoke(false)
             } catch (e) {
                 console.error(e)
@@ -149,17 +197,31 @@ Il2Cpp.perform(() => {
             let connection = Java.cast(url.openConnection(), Java.use('java.net.HttpURLConnection'));
             connection.setRequestMethod('GET');
             connection.setRequestProperty('Content-Type', 'application/json');
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+            connection.setDoInput(true);
+            connection.setChunkedStreamingMode(0);
+            connection.connect();
 
-            let BufferedReader = Java.use('java.io.BufferedReader');
-            let InputStreamReader = Java.use('java.io.InputStreamReader');
-            let reader = BufferedReader.$new(InputStreamReader.$new(connection.getInputStream()));
-            let inputLine;
-            let response = '';
-            while ((inputLine = reader.readLine()) !== null) {
-                response += inputLine;
+            let code = connection.getResponseCode();
+
+            if (code === 200) {
+                let BufferedReader = Java.use('java.io.BufferedReader');
+                let InputStreamReader = Java.use('java.io.InputStreamReader');
+                let reader = BufferedReader.$new(InputStreamReader.$new(connection.getInputStream()));
+                let inputLine;
+                let response = '';
+                while ((inputLine = reader.readLine()) !== null) {
+                    response += inputLine;
+                }
+                reader.close();
+                callback(response)
+            } else {
+                console.error('Failed to get ' + urlString + '. http code:', code);
+                callback('{}')
             }
-            reader.close();
-            callback(response)
+
+            connection.disconnect();
         }
     }
 })
