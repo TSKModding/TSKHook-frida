@@ -1,4 +1,4 @@
-import lief
+import glob
 import subprocess
 import shutil
 import os
@@ -21,9 +21,20 @@ def process_apk():
     shutil.copy('./frida/gadget-android-arm64.so', './tsk_r_programdata/lib/arm64-v8a/libgadget.so')
     shutil.copy('./frida/libgadget.config.so', './tsk_r_programdata/lib/arm64-v8a/libgadget.config.so')
     shutil.copy('./dist/_.js', './tsk_r_programdata/lib/arm64-v8a/libgadget.js.so')
-    lib = lief.parse('./tsk_r_programdata/lib/arm64-v8a/libil2cpp.so')
-    lib.add_library('libgadget.so')
-    lib.write('./tsk_r_programdata/lib/arm64-v8a/libil2cpp.so')
+
+    # smali patch
+    res = glob.glob("./tsk_r_programdata/*/com/unity3d/player/UnityPlayerActivity.smali")
+    for file_name in res:
+        with open(file_name, 'r+', encoding='utf-8') as file:
+            text = file.read()
+            text = text.replace('invoke-direct {p0}, Landroid/app/Activity;-><init>()V',
+                                'invoke-direct {p0}, Landroid/app/Activity;-><init>()V'
+                                '\n    const-string v0, "gadget"'
+                                '\n    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V')
+            file.seek(0)
+            file.write(text)
+            file.truncate()
+
     # copy fonts
     if not os.path.exists(f"./res/{fontName}"):
         os.makedirs("./res", exist_ok=True)
