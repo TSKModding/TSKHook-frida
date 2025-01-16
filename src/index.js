@@ -70,6 +70,7 @@ Il2Cpp.perform(() => {
         const T = {
             names: {},
             chapters: {},
+            fontBundle: null,
             font: null,
             tmpFont: null,
             advId: null,
@@ -115,8 +116,10 @@ Il2Cpp.perform(() => {
                 loadFont()
             }
             T.advId = label.toLowerCase()
-            if (!scenarioLabel.isNull() && !(T.advId in T.chapters)) {
+            if (!scenarioLabel.isNull()) {
                 console.log(T.advId);
+            }
+            if (!scenarioLabel.isNull() && !(T.advId in T.chapters)) {
                 sendHttpRequest(`${T.api}/${T.advId}/zh_Hant/?format=json`, (data) => {
                     T.chapters[T.advId] = JSON.parse(data)
                     console.log('chapter translation loaded. Total:', Object.keys(T.chapters[T.advId]).length);
@@ -172,19 +175,32 @@ Il2Cpp.perform(() => {
                 const TextRenderModule = ASM('UnityEngine.TextRenderingModule').image
                 const AssetBundleModule = ASM('UnityEngine.AssetBundleModule').image
                 const AssetBundle = AssetBundleModule.class('UnityEngine.AssetBundle')
-                const assetBundle = AssetBundle.method('LoadFromFile').invoke(fontPath)
-                const loadTMPFontRequest = assetBundle.method('LoadAssetAsync').inflate(TextMeshPro.class('TMPro.TMP_FontAsset')).invoke(S('notosanscjktc SDF'))
-                while (!loadTMPFontRequest.method('get_isDone').invoke()) {
-                    await new Promise(resolve => setTimeout(resolve, 100));
+
+                if (T.fontBundle === null) {
+                    T.fontBundle = AssetBundle.method('LoadFromFile').invoke(fontPath)
                 }
-                T.tmpFont = loadTMPFontRequest.method('get_asset').invoke()
-                const loadFontRequest = assetBundle.method('LoadAssetAsync').inflate(TextRenderModule.class('UnityEngine.Font')).invoke(S('notosanscjktc'))
-                while (!loadFontRequest.method('get_isDone').invoke()) {
-                    await new Promise(resolve => setTimeout(resolve, 100));
+
+                if (T.tmpFont === null) {
+                    const loadTMPFontRequest = T.fontBundle.method('LoadAssetAsync').inflate(TextMeshPro.class('TMPro.TMP_FontAsset')).invoke(S('notosanscjktc SDF'))
+                    while (!loadTMPFontRequest.method('get_isDone').invoke()) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                    T.tmpFont = loadTMPFontRequest.method('get_asset').invoke()
                 }
-                T.font = loadFontRequest.method('get_asset').invoke()
-                console.log("font load succeed.");
-                assetBundle.method('Unload').invoke(false)
+
+                if (T.font === null) {
+                    const loadFontRequest = T.fontBundle.method('LoadAssetAsync').inflate(TextRenderModule.class('UnityEngine.Font')).invoke(S('notosanscjktc'))
+                    while (!loadFontRequest.method('get_isDone').invoke()) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                    T.font = loadFontRequest.method('get_asset').invoke()
+                }
+
+                T.fontBundle.method('Unload').invoke(false)
+
+                if (T.font !== null && T.tmpFont !== null) {
+                    console.log("font load succeed.");
+                }
             } catch (e) {
                 console.error(e)
             }
