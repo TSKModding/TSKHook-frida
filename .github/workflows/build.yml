@@ -94,7 +94,7 @@ jobs:
 
       - name: Get Frida
         run: |
-          curl -L -o gadget-android-arm64.so.gz "https://github.com/hzzheyang/strongR-frida-android/releases/download/16.5.6/hluda-gadget-16.5.6-android-arm64.so.gz"
+          curl -L -o gadget-android-arm64.so.gz "https://github.com/Ylarod/Florida/releases/download/16.6.3/florida-gadget-16.6.3-android-arm64.so.gz"
           gzip -d gadget-android-arm64.so.gz
           cp gadget-android-arm64.so ./frida/gadget-android-arm64.so
 
