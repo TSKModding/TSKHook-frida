@@ -109,6 +109,6 @@ jobs:
           APK_VERSION: ${{ needs.check_apk_version.outputs.apk_version }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          program_version="v1.0.0"
+          program_version="v1.0.1"
           new_version="${program_version}-game-v${APK_VERSION}"
           gh release create $new_version dist/*.apk
