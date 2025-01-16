@@ -3,7 +3,7 @@ name: APK Version Check and Build
 on:
   workflow_dispatch:
   schedule:
-    - cron: '55 7 * * *' # when usually apk is updated
+    - cron: '45 7 * * *' # when usually apk is updated
 
 jobs:
   check_apk_version:
