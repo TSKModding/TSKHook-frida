@@ -1,7 +1,7 @@
 ﻿# TSKHook-frida
 
 ### 利用Frida實裝[TSKHook](https://github.com/TSKModding/TSKHook)的翻譯功能
-### 只適用於Android 64bit裝置
+### 只適用於Android 64bit裝置 (請注意: 不支援模擬器)
 
 ## 下載
 
