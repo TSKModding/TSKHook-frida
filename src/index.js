@@ -1,5 +1,6 @@
 import 'frida-il2cpp-bridge'
 import fs from "fs";
+import Java from "frida-java-bridge";
 
 function logToAndroid(text) {
     Java.perform(() => {
