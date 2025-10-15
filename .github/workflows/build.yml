@@ -85,16 +85,16 @@ jobs:
         if: ${{ env.act }}
         run: sdkmanager "build-tools;35.0.0"
 
-      - name: Install Dependenices
+      - name: Install v17 Dependencies
         run: |
           sudo apt update
           sudo apt install gzip apktool -y
           python -m pip install -r requirements.txt --user
           npm i
 
-      - name: Get Frida
+      - name: Get Frida v17
         run: |
-          curl -L -o gadget-android-arm64.so.gz "https://github.com/c0re100/Florida/releases/download/17.2.15/florida-gadget-17.2.15-android-arm64.so.gz"
+          curl -L -o gadget-android-arm64.so.gz "https://github.com/c0re100/Florida/releases/download/17.4.0/florida-gadget-17.4.0-android-arm64.so.gz"
           gzip -d gadget-android-arm64.so.gz
           cp gadget-android-arm64.so ./frida/gadget-android-arm64.so
 
@@ -104,7 +104,7 @@ jobs:
         run: |
           python build.py
 
-      - name: Upload APK to release
+      - name: Upload v17 APK to release
         env:
           APK_VERSION: ${{ needs.check_apk_version.outputs.apk_version }}
           GH_TOKEN: ${{ github.token }}
@@ -112,3 +112,36 @@ jobs:
           program_version="v1.1.0"
           new_version="${program_version}-game-v${APK_VERSION}"
           gh release create $new_version dist/*.apk
+
+      - name: Checkout Frida v16 code
+        uses: actions/checkout@v4
+        with:
+          token: '${{ github.token }}'
+          ref: ca7d4db13beaefded5c4547c9d7ce40ccf626e58
+
+      - name: Install v16 Dependencies
+        run: |
+          python -m pip install -r requirements.txt --user
+          npm i
+
+      - name: Get Frida gadget v16
+        run: |
+          curl -L -o gadget-android-arm64.so.gz "https://github.com/Ylarod/Florida/releases/download/16.6.3/florida-gadget-16.6.3-android-arm64.so.gz"
+          gzip -d gadget-android-arm64.so.gz
+          cp gadget-android-arm64.so ./frida/gadget-android-arm64.so
+
+      - name: Run build script
+        env:
+          KEYSTORE: ${{secrets.KEYSTORE}}
+        run: |
+          sed -i -e 's/_translation/_translation_v16/g' build.py
+          python build.py
+
+      - name: Upload v16 APK to release
+        env:
+          APK_VERSION: ${{ needs.check_apk_version.outputs.apk_version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          program_version="v1.1.0"
+          new_version="${program_version}-game-v${APK_VERSION}"
+          gh release upload $new_version dist/*.apk
