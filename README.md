@@ -23,9 +23,9 @@
 
 目前只能用第二個版本的用戶：
 
-Android ART是由Google透過Play Store推送到用戶裝置上，所以每部裝置都可能不同
+[Android ART](https://source.android.com/docs/core/ota/modular-system/art?hl=zh-tw)是由Google透過Play Store推送到用戶裝置上，所以每部裝置都可能不同
 
-所以你可能在某天突然用不到第二個版本，這就是Google推送了一個新版ART給你
+所以你可能在某天突然用不到第二個版本，這是因為Google推送了一個新版ART給你
 
 這時候只能轉用第一個版本
 
