@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "buildw": "frida-compile -S -o dist/_.js -w src/index.js",
-    "build": "frida-compile -S -o dist/_.js src/index.js",
+    "buildw": "frida-compile -S -o dist/_.js -w src/index.ts",
+    "build": "frida-compile -S -o dist/_.js src/index.ts",
     "attach": "run() { frida -U \"$1\" -l dist/_.js --runtime=v8; }; run",
     "spawn": "run() { frida -U -f \"$1\" -l dist/_.js --no-pause --runtime=v8; }; run"
   },
