@@ -11,4 +11,5 @@ res/notosanscjktc
 apktool.*
 .env
 .secret
-/build_local.py
+/build_*local.py
+/melon*/*
