@@ -49,7 +49,7 @@ def process_apk():
             subprocess.run(
                 ['keytool', '-genkey', '-noprompt', '-dname',
                  'CN=TSKModding, OU=TSKModding, O=TSKModding, L=TSKModding, S=TSKModding, C=TSKModding', '-v',
-                 '-keystore', './tsk.keystore', '-alias', 'imys', '-keyalg', 'RSA', '-keysize',
+                 '-keystore', './tsk.keystore', '-alias', 'tsk', '-keyalg', 'RSA', '-keysize',
                  '4096', '-validity', '10000', '-storepass', '123456'], check=True, shell=is_windows)
         subprocess.run(
             ['apksigner', 'sign', '--ks', 'tsk.keystore', '--ks-pass', 'pass:123456', './dist/' + apk_filename],
