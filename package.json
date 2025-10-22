@@ -6,11 +6,10 @@
     "spawn": "run() { frida -U -f \"$1\" -l dist/_.js --no-pause --runtime=v8; }; run"
   },
   "devDependencies": {
-    "@types/frida-gum": "^19.0.1",
-    "@types/node": "~20.9",
-    "frida-compile": "^19.0.4",
-    "frida-fs": "^7.0.0",
-    "frida-il2cpp-bridge": "^0.12.1",
-    "frida-java-bridge": "^7.0.9"
+    "@types/frida-gum": "^18.7.0",
+    "frida-compile": "^16.4.1",
+    "frida-fs": "^5.2.5",
+    "frida-il2cpp-bridge": "^0.11.0",
+    "@types/node": "~20.9"
   }
 }

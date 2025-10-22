@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import Java from 'frida-java-bridge';
 
 export function isFileExists(path) {
     try {

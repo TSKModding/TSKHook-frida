@@ -1,6 +1,5 @@
 import "./gameClass.js";
 import "./patch.js";
-import Java from 'frida-java-bridge';
 
 function logToAndroid(text) {
     Java.perform(() => {
