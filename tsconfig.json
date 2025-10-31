@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
-    "target": "es2022",
+    "target": "esnext",
     "lib": [
-      "es2022"
+      "esnext"
     ],
     "experimentalDecorators": true,
     "allowJs": true,
     "noEmit": false,
     "esModuleInterop": false,
-    "module": "es2022",
+    "module": "esnext",
     "moduleResolution": "Node",
     "strict": false,
     "sourceMap": true
   },
   "include": [
     "src/**/*"
-  ],
+  ]
 }
