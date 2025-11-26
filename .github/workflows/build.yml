@@ -109,8 +109,7 @@ jobs:
           APK_VERSION: ${{ needs.check_apk_version.outputs.apk_version }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          program_version="v1.1.0"
-          new_version="${program_version}-game-v${APK_VERSION}"
+          new_version="v${APK_VERSION}"
           gh release create $new_version dist/*.apk --notes "如果第一個APK沒有劇情翻譯，請嘗試第二個檔名帶有v16的APK"
 
       - name: Checkout Frida v16 code
@@ -142,6 +141,5 @@ jobs:
           APK_VERSION: ${{ needs.check_apk_version.outputs.apk_version }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          program_version="v1.1.0"
-          new_version="${program_version}-game-v${APK_VERSION}"
+          new_version="v${APK_VERSION}"
           gh release upload $new_version dist/*.apk
