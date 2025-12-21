@@ -15,6 +15,7 @@ export let SysFile: Il2Cpp.Class;
 export let SysBinaryReader: Il2Cpp.Class;
 export let SysClass: Il2Cpp.Class;
 export let SysReader: Il2Cpp.Class;
+export let LogClass: Il2Cpp.Class;
 
 export let AdvPage: Il2Cpp.Class;
 export let AdvBacklog: Il2Cpp.Class;
@@ -47,4 +48,7 @@ Il2Cpp.perform(() => {
     SystemModule = Il2Cpp.domain.assembly("System").image;
     SysClass = SystemModule.class('System.Net.WebRequest')
     SysReader = Il2Cpp.corlib.class("System.IO.StreamReader");
+    LogClass = UnityCoreModule.class('UnityEngine.Debug')
+
+    console.log('tsk injector started.');
 });

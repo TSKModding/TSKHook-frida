@@ -1,13 +1,9 @@
 import "./gameClass.js";
 import "./patch.js";
-import Java from 'frida-java-bridge';
+import {LogClass} from "./gameClass";
 
-function logToAndroid(text) {
-    Java.perform(() => {
-        let Log = Java.use("android.util.Log");
-        let TAG_L = "[tskhook-frida]";
-        Log.v(TAG_L, text);
-    });
+function logToAndroid(level, text) {
+    LogClass.method(level).invoke(Il2Cpp.string("[tskhook-frida] " + text))
 }
 
 (function hijackConsole() {
@@ -22,7 +18,7 @@ function logToAndroid(text) {
             return String(arg);
         }).join(" ");
 
-        logToAndroid(message);
+        logToAndroid('Log', message);
         originalLog.apply(console, args);
     };
 
@@ -34,9 +30,7 @@ function logToAndroid(text) {
             return String(arg);
         }).join(" ");
 
-        logToAndroid(`[ERROR] ${message}`);
+        logToAndroid('LogError', `[ERROR] ${message}`);
         originalError.apply(console, args);
     };
 })();
-
-console.log('tsk injector started.');
