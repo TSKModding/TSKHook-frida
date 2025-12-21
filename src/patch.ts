@@ -78,7 +78,7 @@ async function loadFont() {
 Il2Cpp.perform(() => {
     gameClass.AdventureTitleBandView.method('Initialize').implementation = function () {
         const TitleText = toStr(this.method('get_TitleText').invoke())
-        if (currentAdvId in Translation.chapterDicts && TitleText in Translation.chapterDicts[currentAdvId]) {
+        if (tmpFont != null && currentAdvId in Translation.chapterDicts && TitleText in Translation.chapterDicts[currentAdvId]) {
             this.method('set_TitleText').invoke(Il2Cpp.string(Translation.chapterDicts[currentAdvId][TitleText]))
         }
         this.method('Initialize').invoke()
@@ -108,7 +108,7 @@ Il2Cpp.perform(() => {
 Il2Cpp.perform(() => {
     gameClass.AdvBacklog.method('get_MainCharacterNameText').implementation = function () {
         const name = toStr(this.method('get_MainCharacterNameText').invoke())
-        if (Translation.nameDicts[name]) {
+        if (assetFont != null && Translation.nameDicts[name]) {
             return Il2Cpp.string(Translation.nameDicts[name])
         }
         return Il2Cpp.string(name)
@@ -118,7 +118,7 @@ Il2Cpp.perform(() => {
 Il2Cpp.perform(() => {
     gameClass.AdvPage.method('get_NameText').implementation = function () {
         const name = toStr(this.method('get_NameText').invoke())
-        if (Translation.nameDicts[name]) {
+        if (assetFont != null && Translation.nameDicts[name]) {
             return Il2Cpp.string(Translation.nameDicts[name])
         }
         return Il2Cpp.string(name)
@@ -128,7 +128,7 @@ Il2Cpp.perform(() => {
 Il2Cpp.perform(() => {
     gameClass.LanguageManagerBase.method('ParseCellLocalizedTextBySwapDefaultLanguage').implementation = function () {
         const text = toStr(this.method('ParseCellLocalizedTextBySwapDefaultLanguage').invoke(...arguments))
-        if (currentAdvId in Translation.chapterDicts && text in Translation.chapterDicts[currentAdvId]) {
+        if (assetFont != null && currentAdvId in Translation.chapterDicts && text in Translation.chapterDicts[currentAdvId]) {
             return Il2Cpp.string(Translation.chapterDicts[currentAdvId][text])
         }
         return Il2Cpp.string(text)
