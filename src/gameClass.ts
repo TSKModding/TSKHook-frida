@@ -13,8 +13,8 @@ export let FontAsset: Il2Cpp.Class;
 export let SysByte: Il2Cpp.Class;
 export let SysFile: Il2Cpp.Class;
 export let SysBinaryReader: Il2Cpp.Class;
-export let SysClass: Il2Cpp.Class;
-export let SysReader: Il2Cpp.Class;
+export let WebRequest: Il2Cpp.Class;
+export let SysStreamReader: Il2Cpp.Class;
 export let LogClass: Il2Cpp.Class;
 
 export let AdvPage: Il2Cpp.Class;
@@ -46,8 +46,8 @@ Il2Cpp.perform(() => {
     AdventureTitleBandView = Csharp.class('Utage.AdventureTitleBandView')
 
     SystemModule = Il2Cpp.domain.assembly("System").image;
-    SysClass = SystemModule.class('System.Net.WebRequest')
-    SysReader = Il2Cpp.corlib.class("System.IO.StreamReader");
+    WebRequest = SystemModule.class('System.Net.WebRequest')
+    SysStreamReader = Il2Cpp.corlib.class("System.IO.StreamReader");
     LogClass = UnityCoreModule.class('UnityEngine.Debug')
 
     console.log('tsk injector started.');

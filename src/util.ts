@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import Java from 'frida-java-bridge';
-import {SysClass, SysReader} from "./gameClass";
+import {WebRequest, SysStreamReader} from "./gameClass";
 
 export function isFileExists(path) {
     try {
@@ -62,10 +62,10 @@ export function androidhttpGet(targetUrl: string): Promise<any> {
 export function netHttpGet(targetUrl: string): Promise<any> {
     return new Promise((resolve, reject) => {
         try {
-            const request = SysClass.method<Il2Cpp.Object>('Create').overload('System.String').invoke(Il2Cpp.string(targetUrl));
+            const request = WebRequest.method<Il2Cpp.Object>('Create').overload('System.String').invoke(Il2Cpp.string(targetUrl));
             const response = request.method<Il2Cpp.Object>('GetResponse').invoke();
             const respStream = response.method<Il2Cpp.Object>('GetResponseStream').invoke();
-            const reader = SysReader.new()
+            const reader = SysStreamReader.new()
             reader.method<Il2Cpp.Object>(".ctor").overload('System.IO.Stream').invoke(respStream);
             const text = reader.method<Il2Cpp.Object>('ReadToEnd').invoke();
             let data = text.toString().replace(/^"|"$/g, '');
