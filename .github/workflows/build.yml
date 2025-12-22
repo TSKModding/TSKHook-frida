@@ -110,7 +110,39 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           new_version="v${APK_VERSION}"
-          gh release create $new_version dist/*.apk --notes "如果第一個APK沒有劇情翻譯，請嘗試第二個檔名帶有v16的APK"
+          gh release create $new_version dist/*.apk --notes "按此查看[注意事項](https://github.com/TSKModding/TSKHook-frida?tab=readme-ov-file#%E6%B3%A8%E6%84%8F)"
+
+      - name: Checkout Frida v17 workaround code
+        uses: actions/checkout@v4
+        with:
+          token: '${{ github.token }}'
+          ref: v17_workaround
+
+      - name: Install v17 Dependencies
+        run: |
+          python -m pip install -r requirements.txt --user
+          npm i
+
+      - name: Get Frida v17
+        run: |
+          curl -L -o gadget-android-arm64.so.gz "https://github.com/c0re100/Florida/releases/download/17.4.2/florida-gadget-17.4.2-android-arm64.so.gz"
+          gzip -d gadget-android-arm64.so.gz
+          cp gadget-android-arm64.so ./frida/gadget-android-arm64.so
+
+      - name: Run build script
+        env:
+          KEYSTORE: ${{secrets.KEYSTORE}}
+        run: |
+          sed -i -e 's/_translation/_translation_v17_workaround/g' build.py
+          python build.py
+
+      - name: Upload v17 workaround APK to release
+        env:
+          APK_VERSION: ${{ needs.check_apk_version.outputs.apk_version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          new_version="v${APK_VERSION}"
+          gh release upload $new_version dist/*.apk
 
       - name: Checkout Frida v16 code
         uses: actions/checkout@v4
