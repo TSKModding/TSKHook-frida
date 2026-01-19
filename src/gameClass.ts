@@ -5,6 +5,7 @@ export let AssetBundleModule: Il2Cpp.Image;
 export let TextMeshPro: Il2Cpp.Image;
 export let UnityCoreModule: Il2Cpp.Image;
 export let TextRenderingModule: Il2Cpp.Image;
+export let SystemModule: Il2Cpp.Image;
 
 export let AssetBundle: Il2Cpp.Class;
 export let TMP_FontAsset: Il2Cpp.Class;
@@ -12,6 +13,9 @@ export let FontAsset: Il2Cpp.Class;
 export let SysByte: Il2Cpp.Class;
 export let SysFile: Il2Cpp.Class;
 export let SysBinaryReader: Il2Cpp.Class;
+export let WebRequest: Il2Cpp.Class;
+export let SysStreamReader: Il2Cpp.Class;
+export let LogClass: Il2Cpp.Class;
 
 export let AdvPage: Il2Cpp.Class;
 export let AdvBacklog: Il2Cpp.Class;
@@ -40,4 +44,11 @@ Il2Cpp.perform(() => {
     AdvDataManager = Csharp.class('Utage.AdvDataManager')
     LanguageManagerBase = Csharp.class('Utage.LanguageManagerBase')
     AdventureTitleBandView = Csharp.class('Utage.AdventureTitleBandView')
+
+    SystemModule = Il2Cpp.domain.assembly("System").image;
+    WebRequest = SystemModule.class('System.Net.WebRequest')
+    SysStreamReader = Il2Cpp.corlib.class("System.IO.StreamReader");
+    LogClass = UnityCoreModule.class('UnityEngine.Debug')
+
+    LogClass.method('Log').invoke(Il2Cpp.string('[tskhook-frida] tsk injector started.'))
 });
