@@ -11,6 +11,6 @@
     "frida-compile": "^19.0.4",
     "frida-fs": "^7.0.0",
     "frida-il2cpp-bridge": "^0.12.1",
-    "frida-java-bridge": "^7.0.9"
+    "frida-java-bridge": "^7.0.11"
   }
 }

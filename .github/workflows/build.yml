@@ -94,7 +94,7 @@ jobs:
 
       - name: Get Frida v17
         run: |
-          curl -L -o gadget-android-arm64.so.gz "https://github.com/c0re100/Florida/releases/download/17.4.2/florida-gadget-17.4.2-android-arm64.so.gz"
+          curl -L -o gadget-android-arm64.so.gz "https://github.com/c0re100/Florida/releases/download/17.6.0/florida-gadget-17.6.0-android-arm64.so.gz"
           gzip -d gadget-android-arm64.so.gz
           cp gadget-android-arm64.so ./frida/gadget-android-arm64.so
 
@@ -125,7 +125,7 @@ jobs:
 
       - name: Get Frida v17
         run: |
-          curl -L -o gadget-android-arm64.so.gz "https://github.com/c0re100/Florida/releases/download/17.4.2/florida-gadget-17.4.2-android-arm64.so.gz"
+          curl -L -o gadget-android-arm64.so.gz "https://github.com/c0re100/Florida/releases/download/17.6.0/florida-gadget-17.6.0-android-arm64.so.gz"
           gzip -d gadget-android-arm64.so.gz
           cp gadget-android-arm64.so ./frida/gadget-android-arm64.so
 
