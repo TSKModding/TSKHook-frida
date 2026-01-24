@@ -94,7 +94,7 @@ jobs:
 
       - name: Get Frida v17
         run: |
-          curl -L -o gadget-android-arm64.so.gz "https://github.com/c0re100/Florida/releases/download/17.6.0/florida-gadget-17.6.0-android-arm64.so.gz"
+          curl -L -o gadget-android-arm64.so.gz "https://github.com/c0re100/Florida/releases/download/17.6.2/florida-gadget-17.6.2-android-arm64.so.gz"
           gzip -d gadget-android-arm64.so.gz
           cp gadget-android-arm64.so ./frida/gadget-android-arm64.so
 
@@ -110,7 +110,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           new_version="v${APK_VERSION}"
-          gh release create $new_version dist/*.apk --notes "按此查看[注意事項](https://github.com/TSKModding/TSKHook-frida?tab=readme-ov-file#%E6%B3%A8%E6%84%8F)"
+          gh release create $new_version dist/*.apk --notes "為免造成不必要的維護成本，v17不再分割成兩個版本\n
+          v17替代版本已成為主要版本\n
+          按此查看[注意事項](https://github.com/TSKModding/TSKHook-frida?tab=readme-ov-file#%E6%B3%A8%E6%84%8F)"
 
       - name: Checkout Frida v16 code
         uses: actions/checkout@v4
