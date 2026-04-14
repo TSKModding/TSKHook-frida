@@ -19,7 +19,7 @@ jobs:
       - name: Install Github CLI
         if: ${{ env.act }}
         run: |
-          wget -O gh.deb https://github.com/cli/cli/releases/download/v2.61.0/gh_2.61.0_linux_amd64.deb
+          wget -O gh.deb https://github.com/cli/cli/releases/download/v2.89.0/gh_2.89.0_linux_amd64.deb
           dpkg -i gh.deb
 
       - name: Get the last release version
@@ -57,6 +57,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Install Github CLI
+        if: ${{ env.act }}
+        run: |
+          wget -O gh.deb https://github.com/cli/cli/releases/download/v2.89.0/gh_2.89.0_linux_amd64.deb
+          dpkg -i gh.deb
 
       - name: Install Python
         if: ${{ env.act }}
