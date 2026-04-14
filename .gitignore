@@ -13,3 +13,4 @@ apktool.*
 .secret
 /build_*local.py
 /melon*/*
+/build_local.sh
