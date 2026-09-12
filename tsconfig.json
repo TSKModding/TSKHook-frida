@@ -7,7 +7,6 @@
     "experimentalDecorators": true,
     "allowJs": true,
     "noEmit": false,
-    "esModuleInterop": false,
     "module": "esnext",
     "moduleResolution": "Node",
     "strict": false,
