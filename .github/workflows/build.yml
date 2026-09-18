@@ -85,7 +85,7 @@ jobs:
 
       - name: Setup Android SDK
         if: ${{ env.act }}
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Install Android build-tools
         if: ${{ env.act }}
