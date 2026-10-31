@@ -74,7 +74,7 @@ jobs:
         if: ${{ env.act }}
         uses: actions/setup-node@v4
         with:
-          node-version: latest
+          node-version: '26.13.0'
 
       - name: Install Java
         if: ${{ env.act }}
