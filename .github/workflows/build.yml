@@ -125,18 +125,36 @@ jobs:
         if: ${{ env.act }}
         run: sdkmanager "build-tools;35.0.0"
 
-      - name: Use German Ubuntu mirror
+      - name: Use Ubuntu country mirror
         shell: bash
         run: |
-          if [[ "${GITEA_ACTIONS:-}" != "true" ]]; then
-            echo "Skipping mirror change outside Gitea Actions."
+          . /etc/os-release
+          if [[ "$ID" != "ubuntu" ]]; then
+            echo "Skipping Ubuntu mirror selection on $ID."
             exit 0
           fi
 
+          country_code="$(curl -fsSL --connect-timeout 5 --max-time 10 https://ipinfo.io/country || true)"
+          country_code="${country_code,,}"
+          if [[ ! "$country_code" =~ ^[a-z]{2}$ ]]; then
+            echo "Country lookup failed; keeping the existing mirrors."
+            exit 0
+          fi
+
+          mirror="http://${country_code}.archive.ubuntu.com/ubuntu"
+          suite="${UBUNTU_CODENAME:-${VERSION_CODENAME:-}}"
+          if [[ -z "$suite" ]] || ! curl -fsSL --connect-timeout 5 --max-time 15 \
+            -o /dev/null "$mirror/dists/$suite/InRelease"; then
+            echo "Country mirror unavailable for this Ubuntu release; keeping the existing mirrors."
+            exit 0
+          fi
+
+          echo "Using Ubuntu country mirror: $mirror/"
+          # Preserve security.ubuntu.com and custom repositories.
           for source in /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources; do
             if [[ -f "$source" ]]; then
               sudo sed -i -E \
-                's#https?://([[:alnum:]-]+\.)?(archive|security)\.ubuntu\.com/ubuntu/?#https://ftp.fau.de/ubuntu/#g' "$source"
+                "s#https?://([[:alnum:]-]+\.)?archive\.ubuntu\.com/ubuntu/?#${mirror}/#g" "$source"
             fi
           done
 
